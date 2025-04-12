@@ -28,99 +28,117 @@ struct SopaDeLetras {
     int cantidad_palabras;
 };
 
-void leerArchivo( const char *archivo, struct SopaDeLetras* sopa){
+// Función para leer el archivo
+void leerArchivo(const char *archivo, struct SopaDeLetras *sopa) {
     int fila = 0;
     int columna = 0;
     char letra;
     FILE *f = fopen(archivo, "r");
-    if (f == NULL){
+    if (f == NULL) {
         printf("Error al abrir el archivo.\n");
         return;
     }
 
-    // Armando la sopa de letra
-    fscanf (f, "%c", &letra);
-    while (!feof(f) && letra !='\n')
-    {
-        while (!feof(f) && letra !='\n') 
-        {
-            sopa->grilla[fila][columna]=letra;
+    fscanf(f, "%c", &letra);
+    while (!feof(f) && letra != '\n') {
+        while (!feof(f) && letra != '\n') {
+            sopa->grilla[fila][columna] = letra;
             columna++;
-            fscanf (f, "%c", &letra);
+            fscanf(f, "%c", &letra);
         }
-        fscanf (f, "%c", &letra);
-        sopa->columnas = columna; //Almaceno la cantidad de columnas
+        sopa->columnas = columna; // Cantidad de columnas
         fila++;
         columna = 0;
+        fscanf(f, "%c", &letra);
     }
-    sopa->filas=fila; //Almaceno la cantidad de filas
-    
-    
-    // Consiguiendo las palabras a buscar
-    fscanf (f, "%c", &letra); 
-    while (!feof(f))
-    {
+    sopa->filas = fila; // Cantidad de filas
+
+    fscanf(f, "%c", &letra);
+    while (!feof(f)) {
         char palabra[TAMANIO_MAXIMO_PALABRA];
         int indice = 0;
-        
-        while (!feof(f) && letra !='\n') 
-        {
-            if (letra == '#'){ // Comentario a ignorar, lineas que inician con #
-                while (!feof(f) && letra != '\n'){
-                    fscanf (f, "%c", &letra);
+
+        while (!feof(f) && letra != '\n') {
+            if (letra == '#') {
+                while (!feof(f) && letra != '\n') {
+                    fscanf(f, "%c", &letra);
                 }
-            }
-            if (letra != '\n'){
-                //printf("%c", letra);
+            } else {
                 palabra[indice] = letra;
                 indice++;
-                fscanf (f, "%c", &letra);
-                
+                fscanf(f, "%c", &letra);
             }
-            
         }
+
         palabra[indice] = '\0';
-        if (sopa->cantidad_palabras < MAXIMO_PALABRAS) {
-            strcpy(sopa->palabras[sopa->cantidad_palabras], palabra); //Agrego las palabras en el vector. 
+        if (indice > 0 && sopa->cantidad_palabras < MAXIMO_PALABRAS) { // Ignorar palabras vacías
+            strcpy(sopa->palabras[sopa->cantidad_palabras], palabra);
             sopa->cantidad_palabras++;
         }
-        
-        fscanf (f, "%c", &letra);
+        fscanf(f, "%c", &letra);
     }
-
     fclose(f);
-} 
+}
 
-void imprimirMatriz(struct SopaDeLetras* sopa){
-    printf("Sopa de letra \n");
-    for (int i = 0; i < sopa->filas; i++){
-        for (int j = 0; j < sopa->columnas; j++){
+// Función para imprimir la matriz
+void imprimirMatriz(struct SopaDeLetras *sopa) {
+    printf("Sopa de letras:\n");
+    for (int i = 0; i < sopa->filas; i++) {
+        for (int j = 0; j < sopa->columnas; j++) {
             printf("%c", sopa->grilla[i][j]);
         }
         printf("\n");
-    };
-
+    }
 }
-//Imprime correctamente la matriz.
 
-void imprimirPalabras(struct SopaDeLetras* sopa) {
+// Función para imprimir palabras almacenadas
+void imprimirPalabras(struct SopaDeLetras *sopa) {
     printf("Vector de palabras almacenadas:\n");
     for (int i = 0; i < sopa->cantidad_palabras; i++) {
         printf("Palabra %d: %s\n", i + 1, sopa->palabras[i]);
     }
 }
-//Hay que arreglar, que imprime lineas vacias dentro del vector de palabras.
 
-
-
-int main(){
+int main() {
     struct SopaDeLetras sopa;
-    sopa.filas = 13;
-    sopa.columnas = 16;
+    sopa.filas = 0;
+    sopa.columnas = 0;
+    sopa.cantidad_palabras = 0;
+
     leerArchivo("entrada.txt", &sopa);
-    imprimirMatriz(&sopa);
-    printf("***************************\n");
-    imprimirPalabras(&sopa);
+
+    int opcion;
+
+    do {
+        printf("*****************************\n");
+        printf("************MENU***************\n");
+        printf("*******************************\n");
+        printf("1 - Mostrar sopa de letras\n");
+        printf("2 - Mostrar Palabras\n");
+        printf("0 - Salir\n");
+        printf("Ingrese la opcion deseada: ");
+
+        if (scanf("%d", &opcion) != 1) {
+            printf("Entrada inválida. Por favor, ingrese un número.\n");
+            while (getchar() != '\n');
+            continue;
+        }
+
+        switch (opcion) {
+            case 0:
+                printf("Saliendo del programa...\n");
+                break;
+            case 1:
+                imprimirMatriz(&sopa);
+                break;
+            case 2:
+                imprimirPalabras(&sopa);
+                break;
+            default:
+                printf("Opción no válida.\n");
+                break;
+        }
+    } while (opcion != 0);
 
     return 0;
 }
