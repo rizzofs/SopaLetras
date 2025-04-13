@@ -77,6 +77,8 @@ void leerArchivo(const char *archivo, struct SopaDeLetras *sopa) {
             sopa->longitud[sopa->cantidad_palabras] = strlen(palabra);//Almaceno la longitud de cada palabra
             sopa->cantidad_palabras++;
                     
+
+
         }
         fscanf(f, "%c", &letra);
         
@@ -103,8 +105,74 @@ void imprimirPalabras(struct SopaDeLetras *sopa) {
     }
 }
 
-
 //Función recursiva para encontrar la palabra.
+bool buscarPalabra(struct SopaDeLetras *sopa, int filaSopa, int columnaSopa, int filaPalabra, int columnaPalabra, int direccion){
+    char letraPalabra = sopa->palabras[filaPalabra][columnaPalabra];
+    char letraSopa = sopa->grilla[filaSopa][columnaSopa];
+    
+    //   Llego al final de la cadena de la palabra que buscaba
+    if (letraPalabra == '\0'){
+        return true;
+    }   
+
+    //     Chequear límites
+    if (filaSopa < 0 || columnaSopa < 0 || columnaSopa >= sopa->filas|| filaSopa >= sopa->columnas)
+        return false;
+
+    // Comprobar si la letra de la palabra es igual a la letra que tiene la sopa
+    if (letraPalabra == letraSopa) {
+        if (direccion == 0){
+            return (buscarPalabra(sopa, filaSopa-1, columnaSopa, filaPalabra, columnaPalabra+1, 1)|| //Vertical Arriba
+            buscarPalabra(sopa, filaSopa-1, columnaSopa+1, filaPalabra, columnaPalabra+1, 2)|| // Diagonal Derecha Arriba
+            buscarPalabra(sopa, filaSopa, columnaSopa+1, filaPalabra, columnaPalabra+1, 3)|| // Horizontal Derecha
+            buscarPalabra(sopa, filaSopa+1, columnaSopa+1, filaPalabra, columnaPalabra+1, 4)|| // Diagonal Derecha Abajo
+            buscarPalabra(sopa, filaSopa+1, columnaSopa, filaPalabra, columnaPalabra+1, 5)|| //Vertical Abajo
+            buscarPalabra(sopa, filaSopa+1, columnaSopa-1, filaPalabra, columnaPalabra+1, 6)|| //Diagonal Izquierda Abajo
+            buscarPalabra(sopa, filaSopa, columnaSopa-1, filaPalabra, columnaPalabra+1, 7)|| //Horizontal Izquierda
+            buscarPalabra(sopa, filaSopa-1, columnaSopa-1, filaPalabra, columnaPalabra+1, 8) // Diagonal Izquierda Arriba
+            );
+        } else {
+            switch (direccion)
+            {
+            case 1: // Vertical Arriba
+                buscarPalabra(sopa, filaSopa-1, columnaSopa, filaPalabra, columnaPalabra+1, 1);
+                break;
+            case 2:// Diagonal Derecha Arriba
+                buscarPalabra(sopa, filaSopa-1, columnaSopa+1, filaPalabra, columnaPalabra+1, 2);
+                break;
+            case 3:// Horizontal Derecha
+                buscarPalabra(sopa, filaSopa, columnaSopa+1, filaPalabra, columnaPalabra+1, 3);
+                break;
+            case 4: // Diagonal Derecha Abajo
+                buscarPalabra(sopa, filaSopa+1, columnaSopa+1, filaPalabra, columnaPalabra+1, 4);
+                break;
+            case 5://Vertical Abajo
+                buscarPalabra(sopa, filaSopa+1, columnaSopa, filaPalabra, columnaPalabra+1, 5);
+                break;
+            case 6://Diagonal Izquierda Abajo
+                buscarPalabra(sopa, filaSopa+1, columnaSopa-1, filaPalabra, columnaPalabra+1, 6);
+                break;
+            case 7://Horizontal Izquierda
+                buscarPalabra(sopa, filaSopa, columnaSopa-1, filaPalabra, columnaPalabra+1, 7);
+                break;
+            case 8:// Diagonal Izquierda Arriba
+                buscarPalabra(sopa, filaSopa-1, columnaSopa-1, filaPalabra, columnaPalabra+1, 8);
+                break;
+            
+            default:
+                break;
+            }
+        }
+    } else {
+        return false;
+    }
+}
+
+
+
+
+
+
 
 //Función para generar el archivo de salida.  
 
@@ -124,6 +192,7 @@ int main() {
         printf("*******************************\n");
         printf("1 - Mostrar sopa de letras\n");
         printf("2 - Mostrar Palabras\n");
+        printf("3 - Buscar Compas\n");
         printf("0 - Salir\n");
         printf("Ingrese la opcion deseada: ");
 
@@ -133,6 +202,7 @@ int main() {
             continue;
         }
 
+        bool x;
         switch (opcion) {
             case 0:
                 printf("Saliendo del programa...\n");
@@ -143,6 +213,11 @@ int main() {
             case 2:
                 imprimirPalabras(&sopa);
                 break;
+            case 3:
+                //bool buscarPalabra(struct SopaDeLetras *sopa, int filaSopa, int columnaSopa, int filaPalabra, int columnaPalabra, int direccion){
+                x = buscarPalabra(&sopa, 3, 4, 0, 0, 0);
+                printf("valor de x: %d\n", x);
+            break;
             default:
                 printf("Opción no válida.\n");
                 break;
@@ -156,3 +231,42 @@ int main() {
 //gcc -o Sopa Sopa.c
 //Ejecutar
 // ./sopa
+
+// bool resolver_laberinto_aux(struct Laberinto *lab, const int i, const int j) {
+//     imprimir_laberinto(lab);
+
+//     Chequear límites
+//     if (i < 0 || j < 0 || i >= lab->alto || j >= lab->ancho)
+//         return false;
+
+//     Chequear si chocamos con una pared o ya visitamos
+//     if (lab->laberinto[i][j] == 'P' || lab->laberinto[i][j] == '*')
+//         return false;
+
+//     Chequear si llegamos al final
+//     if (lab->laberinto[i][j] == 'S')
+//         return true;
+
+//     Marcar la posición actual como visitada
+//     char original = lab->laberinto[i][j];
+//     lab->laberinto[i][j] = '*';
+
+//     Intentar todas las cuatro direcciones
+//     if (resolver_laberinto_aux(lab, i + 1, j) ){(
+        
+//         resolver_laberinto_aux(lab, i + 1, j)
+//     }
+    
+    
+//     || // abajo
+//         resolver_laberinto_aux(lab, i - 1, j) || // arriba
+//         resolver_laberinto_aux(lab, i, j + 1) || // derecha
+//         resolver_laberinto_aux(lab, i, j - 1)) {
+//         izquierda
+//         return true;
+//     }
+
+//     Si no se encontró un camino, retroceder
+//     lab->laberinto[i][j] = original;
+//     return false;
+// }
