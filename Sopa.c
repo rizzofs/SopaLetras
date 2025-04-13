@@ -2,6 +2,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+#include <assert.h>
 
 #define TAMANIO_MAXIMO_GRILLA 100
 #define TAMANIO_MAXIMO_PALABRA 50
@@ -110,12 +112,12 @@ bool buscarPalabra(struct SopaDeLetras *sopa, int filaSopa, int columnaSopa, int
     char letraPalabra = sopa->palabras[filaPalabra][columnaPalabra];
     char letraSopa = sopa->grilla[filaSopa][columnaSopa];
     
-    //   Llego al final de la cadena de la palabra que buscaba
+    //  Caso Base: Llego al final de la cadena de la palabra que buscaba
     if (letraPalabra == '\0'){
         return true;
     }   
 
-    //     Chequear límites
+    //  Caso Base: Chequear límites
     if (filaSopa < 0 || columnaSopa < 0 || columnaSopa >= sopa->filas|| filaSopa >= sopa->columnas)
         return false;
 
@@ -132,7 +134,7 @@ bool buscarPalabra(struct SopaDeLetras *sopa, int filaSopa, int columnaSopa, int
             buscarPalabra(sopa, filaSopa-1, columnaSopa-1, filaPalabra, columnaPalabra+1, 8) // Diagonal Izquierda Arriba
             );
         } else {
-            switch (direccion)
+            switch (direccion) //Creo que nos falta agregar un return en cada caso. 
             {
             case 1: // Vertical Arriba
                 buscarPalabra(sopa, filaSopa-1, columnaSopa, filaPalabra, columnaPalabra+1, 1);
@@ -167,11 +169,6 @@ bool buscarPalabra(struct SopaDeLetras *sopa, int filaSopa, int columnaSopa, int
         return false;
     }
 }
-
-
-
-
-
 
 
 //Función para generar el archivo de salida.  
@@ -214,6 +211,7 @@ int main() {
                 imprimirPalabras(&sopa);
                 break;
             case 3:
+                //Medir tiempo de ejecucion
                 //bool buscarPalabra(struct SopaDeLetras *sopa, int filaSopa, int columnaSopa, int filaPalabra, int columnaPalabra, int direccion){
                 x = buscarPalabra(&sopa, 3, 4, 0, 0, 0);
                 printf("valor de x: %d\n", x);
