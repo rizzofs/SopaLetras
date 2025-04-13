@@ -26,6 +26,7 @@ struct SopaDeLetras {
     int columnas;
     char palabras[MAXIMO_PALABRAS][TAMANIO_MAXIMO_PALABRA];
     int cantidad_palabras;
+    int longitud[MAXIMO_PALABRAS]; //agregue esto
 };
 
 // Función para leer el archivo
@@ -73,31 +74,39 @@ void leerArchivo(const char *archivo, struct SopaDeLetras *sopa) {
         palabra[indice] = '\0';
         if (indice > 0 && sopa->cantidad_palabras < MAXIMO_PALABRAS) { // Ignorar palabras vacías
             strcpy(sopa->palabras[sopa->cantidad_palabras], palabra);
+            sopa->longitud[sopa->cantidad_palabras] = strlen(palabra);//Almaceno la longitud de cada palabra
             sopa->cantidad_palabras++;
+                    
         }
         fscanf(f, "%c", &letra);
+        
     }
     fclose(f);
 }
 
-// Función para imprimir la matriz
+// Función para imprimir la matriz.
 void imprimirMatriz(struct SopaDeLetras *sopa) {
     printf("Sopa de letras:\n");
     for (int i = 0; i < sopa->filas; i++) {
         for (int j = 0; j < sopa->columnas; j++) {
-            printf("%c", sopa->grilla[i][j]);
+            printf("%c ", sopa->grilla[i][j]);
         }
         printf("\n");
     }
 }
 
-// Función para imprimir palabras almacenadas
+// Función para imprimir palabras almacenadas y sus longitudes.
 void imprimirPalabras(struct SopaDeLetras *sopa) {
-    printf("Vector de palabras almacenadas:\n");
+    printf("Vector de palabras almacenadas y longitudes:\n");
     for (int i = 0; i < sopa->cantidad_palabras; i++) {
-        printf("Palabra %d: %s\n", i + 1, sopa->palabras[i]);
+        printf("Palabra: %s, Longitud: %d\n", sopa->palabras[i], sopa->longitud[i]);
     }
 }
+
+
+//Función recursiva para encontrar la palabra.
+
+//Función para generar el archivo de salida.  
 
 int main() {
     struct SopaDeLetras sopa;
@@ -142,3 +151,8 @@ int main() {
 
     return 0;
 }
+
+// Compilar
+//gcc -o Sopa Sopa.c
+//Ejecutar
+// ./sopa
