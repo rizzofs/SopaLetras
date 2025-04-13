@@ -9,6 +9,10 @@
 #define TAMANIO_MAXIMO_PALABRA 50
 #define MAXIMO_PALABRAS 100
 
+// Colores ANSI
+#define ROJO "\033[1;31m"
+#define BLANCO "\033[0m"
+
 struct Posicion {
     unsigned int fila;
     unsigned int columna;
@@ -105,6 +109,79 @@ void imprimirPalabras(struct SopaDeLetras *sopa) {
     for (int i = 0; i < sopa->cantidad_palabras; i++) {
         printf("Palabra: %s, Longitud: %d\n", sopa->palabras[i], sopa->longitud[i]);
     }
+}
+
+//Funcion para colorear las palabras una a una.
+void colorearPalabras(struct SopaDeLetras *sopa, struct ResultadoPalabra  *palabra){
+    if (palabra->encontrada){
+        unsigned int filaInicio = palabra->inicio.fila;
+        unsigned int ColumnaInicio = palabra->inicio.columna;
+        unsigned int filaFin = palabra->fin.fila;
+        unsigned int ColumnaFin = palabra->fin.columna;
+
+        //Vertical Arriba
+        if (ColumnaInicio == ColumnaFin && filaInicio > filaFin){
+            for(int x = filaInicio; x >= filaFin; x--){
+                printf(ROJO "%c " BLANCO, sopa->grilla[x][ColumnaInicio]);    
+            }
+        }
+        //Diagonal Derecha Arriba
+        else if(filaInicio < filaFin && ColumnaInicio < ColumnaFin){
+            for (int x = filaInicio; x <= filaFin; x++){
+                for (int y = ColumnaInicio; y <= ColumnaFin; y++){
+                    printf(ROJO "%c " BLANCO, sopa->grilla[x][y]);            
+                }
+            }
+        }        
+        //Horizontal Derecha
+        else if (filaInicio == filaFin && ColumnaInicio <= ColumnaFin){
+            for(int y = ColumnaInicio; y <= ColumnaFin; y++ )
+            printf(ROJO "%c " BLANCO, sopa->grilla[filaInicio][y]);
+        }
+        //Diagonal Derecha Abajo
+        else if(filaInicio > filaFin && ColumnaInicio < ColumnaFin){
+            for (int x = filaInicio; x >= filaFin; x--){
+                for (int y = ColumnaInicio; y <= ColumnaFin; y++){
+                    printf(ROJO "%c " BLANCO, sopa->grilla[x][y]);            
+                }
+            }
+        }
+        //Vertical Abajo
+        else if(ColumnaInicio == ColumnaFin && filaInicio < filaFin){
+            for(int x = filaInicio; x <= filaFin; x++ ){
+                printf(ROJO "%c " BLANCO, sopa->grilla[x][ColumnaInicio]);
+            }
+        }
+        //Diagonal Izquierda Abajo
+        else if(filaInicio > filaFin && ColumnaInicio > ColumnaFin){
+            for(int x = filaInicio; x >= filaFin;x++){
+                for(int y = ColumnaInicio; y >= ColumnaFin; y--){
+                    printf(ROJO "%c " BLANCO, sopa->grilla[x][y]);
+                }
+            }
+        }
+        //Horizontal Izquierda
+        else if(filaInicio == filaFin && ColumnaInicio >= ColumnaFin){
+            for(int y = ColumnaInicio; y <= ColumnaFin; y--){
+                printf(ROJO "%c " BLANCO, sopa->grilla[filaInicio][y]);
+            }
+            
+        }
+        //Diagonal Izquierda Arriba
+        else if(filaInicio < filaFin && ColumnaInicio > ColumnaFin){
+            for(int x = filaInicio; x <= filaFin; x++){
+                for(int y = ColumnaInicio; y >= ColumnaFin; y--){
+                    printf(ROJO "%c " BLANCO, sopa->grilla[x][y]);
+                }
+            }
+        }
+        
+    }
+}
+
+//Funcion recursiva para colorear todas las palabras
+void colorearTodasLasPalabras(struct SopaDeLetras *sopa){
+    
 }
 
 //Función recursiva para encontrar la palabra.
@@ -215,7 +292,9 @@ int main() {
                 //bool buscarPalabra(struct SopaDeLetras *sopa, int filaSopa, int columnaSopa, int filaPalabra, int columnaPalabra, int direccion){
                 x = buscarPalabra(&sopa, 3, 4, 0, 0, 0);
                 printf("valor de x: %d\n", x);
-            break;
+                break;
+            case 4:
+                break;
             default:
                 printf("Opción no válida.\n");
                 break;

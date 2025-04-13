@@ -3,8 +3,8 @@
 ## Año: 2025
 
 ## Integrantes:
-*   Valentín Giaccone
 *   Gonzalo Ibañez
+*   Valentín Giaccone
 *   Federico Rizzo
 ---
 ## Docentes:
@@ -21,3 +21,14 @@ Esta función lee un archivo de texto que contine una sopa de letras y palabras 
 2) Lee los caracteres fila por fila hasta un salto de linea ``` \n``` y almacena cada letra en una matriz llamada grilla, a su vez actualiza la cantidad de filas y columnas.
 3) Identifica palabras en el archivo cuya linea no comienze con ```#```. Luego almacena las palabras en un arreglo dentro de ```SopaDeLetras```, junto a su longitud.
 4) Una vez finalizada la lectura cierra el archivo con ``fclose()``
+
+## MOVIMIENTOS POSIBLES:
+- Vertical Arriba (↑)
+- Diagonal Derecha Arriba (↗)
+- Horizontal Derecha (→)
+- Diagonal Derecha Abajo (↘)
+- Vertical Abajo (↓)
+- Diagonal Izquierda Abajo (↙)
+- Horizontal Izquierda (←)
+- Diagonal Izquierda Arriba (↖)
+
