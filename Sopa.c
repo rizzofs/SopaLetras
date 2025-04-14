@@ -196,14 +196,18 @@ void colorearTodasLasPalabras(struct SopaDeLetras *sopa){
 bool buscarPalabra(struct SopaDeLetras *sopa, int filaSopa, int columnaSopa, char palabra[TAMANIO_MAXIMO_PALABRA], int columnaPalabra, int direccion){
     char letraPalabra = palabra[columnaPalabra];
     char letraSopa = sopa->grilla[filaSopa][columnaSopa];
+    int filaInicial;
+    int columnaInicial;
 
-    
     //   printf("Palabra: %s, letra: %c, letraSopa: %c, direccion: %d, coordenadas (%d, %d)\n", palabra, letraPalabra, letraSopa, direccion, filaSopa, columnaSopa);
     
     
     //  Caso Base: Llego al final de la cadena de la palabra que buscaba
     if (letraPalabra == '\0'){
-        // palabraEncontrada();
+        // printf("Coordenadas de inicio: %d, %d\n", filaInicial, columnaInicial);
+        // printf("Coordenadas de fin: %d, %d\n", filaSopa, columnaSopa);
+        
+        //fila.colum
         return true;
     }
     // if (columnaPalabra > strlen(palabra) - 1){
@@ -217,6 +221,8 @@ bool buscarPalabra(struct SopaDeLetras *sopa, int filaSopa, int columnaSopa, cha
 
     // Comprobar si la letra de la palabra es igual a la letra que tiene la sopa
     if (letraPalabra == letraSopa) {
+        //inicio.fila
+        //inico.colum
         if (direccion == 0){
             return (
                 buscarPalabra(sopa, filaSopa-1, columnaSopa, palabra, columnaPalabra+1, 1)|| //Vertical Arriba
@@ -265,7 +271,7 @@ bool buscarPalabra(struct SopaDeLetras *sopa, int filaSopa, int columnaSopa, cha
     }
 }
 
-void recorrerSopa(struct SopaDeLetras *sopa){
+void recorrerSopa(struct SopaDeLetras *sopa, struct ResultadoPalabra *resultado){
     
     for (int i = 0; i < sopa->filas; i++){
         for (int j = 0; j < sopa->columnas; j++){
@@ -279,12 +285,26 @@ void recorrerSopa(struct SopaDeLetras *sopa){
                     //     sopa->datos[k].encontrada = buscarPalabra(sopa, i, j, sopa->datos[k].palabra, 0, 0);
                     // //    printf("Termina la recursividad, el resultado fue:\n", sopa->datos[k].encontrada);
                     if (sopa->grilla[i][j] == sopa->palabras[k][0]){
-                        
+                        // resultado->inicio.fila = i;
+                        // resultado->inicio.columna =j;
+                        // printf("Coordenadas de inicio: %d, %d\n",resultado->inicio.fila,resultado->inicio.columna);
                         // sopa->datos[k].encontrada = buscarPalabra(sopa, i, j, sopa->datos[k].palabra, 0, 0);
                         sopa->datos[k].encontrada = buscarPalabra(sopa, i, j, sopa->palabras[k], 0, 0);
-                    //    printf("Termina la recursividad, el resultado fue:\n", sopa->datos[k].encontrada);
+                        //    printf("Termina la recursividad, el resultado fue:\n", sopa->datos[k].encontrada);
+                        
+                        //Tenemos coordenas iniciales y funiona (NO TOCAR)
+                         if(sopa->datos[k].encontrada){
+                            resultado->inicio.fila = i;
+                            resultado->inicio.columna =j;
+                            printf("Coordenadas de inicio: %d, %d\n",resultado->inicio.fila,resultado->inicio.columna);
+                        }
+                        // resultado->fin.fila = *fila;
+                        // resultado->fin.columna = *columna;
+                        // printf("Coordenadas de fin: %d, %d\n",resultado->fin.fila,resultado->fin.columna);}
+                        
                     }
                 }
+                
             }
         }
     }
@@ -298,7 +318,7 @@ int main() {
     sopa.columnas = 0;
     sopa.cantidad_palabras = 0;
     struct ResultadoPalabra palabraDatos[MAXIMO_PALABRAS];
-    
+    struct ResultadoPalabra resultado;
 
     leerArchivo("entrada.txt", &sopa);
 
@@ -334,7 +354,7 @@ int main() {
             case 3:
                 //Medir tiempo de ejecucion
                 //bool buscarPalabra(struct SopaDeLetras *sopa, int filaSopa, int columnaSopa, int filaPalabra, int columnaPalabra, int direccion){
-                recorrerSopa(&sopa);
+                recorrerSopa(&sopa , &resultado);
                 break;
             case 4:
                 break;
@@ -347,46 +367,8 @@ int main() {
     return 0;
 }
 
-// Compilar
+/* Compilar */
 //gcc -o Sopa Sopa.c
-//Ejecutar
+/* Ejecutar */
 // ./sopa
 
-// bool resolver_laberinto_aux(struct Laberinto *lab, const int i, const int j) {
-//     imprimir_laberinto(lab);
-
-//     Chequear límites
-//     if (i < 0 || j < 0 || i >= lab->alto || j >= lab->ancho)
-//         return false;
-
-//     Chequear si chocamos con una pared o ya visitamos
-//     if (lab->laberinto[i][j] == 'P' || lab->laberinto[i][j] == '*')
-//         return false;
-
-//     Chequear si llegamos al final
-//     if (lab->laberinto[i][j] == 'S')
-//         return true;
-
-//     Marcar la posición actual como visitada
-//     char original = lab->laberinto[i][j];
-//     lab->laberinto[i][j] = '*';
-
-//     Intentar todas las cuatro direcciones
-//     if (resolver_laberinto_aux(lab, i + 1, j) ){(
-        
-//         resolver_laberinto_aux(lab, i + 1, j)
-//     }
-    
-    
-//     || // abajo
-//         resolver_laberinto_aux(lab, i - 1, j) || // arriba
-//         resolver_laberinto_aux(lab, i, j + 1) || // derecha
-//         resolver_laberinto_aux(lab, i, j - 1)) {
-//         izquierda
-//         return true;
-//     }
-
-//     Si no se encontró un camino, retroceder
-//     lab->laberinto[i][j] = original;
-//     return false;
-// }
