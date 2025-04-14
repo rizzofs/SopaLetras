@@ -202,17 +202,17 @@ bool buscarPalabra(struct SopaDeLetras *sopa, int filaSopa, int columnaSopa, cha
     
     
     //  Caso Base: Llego al final de la cadena de la palabra que buscaba
-    // if (letraPalabra == '\0'){
-    //     // palabraEncontrada();
-    //     return true;
-    // }
-    if (columnaPalabra > strlen(palabra) - 1){
-        printf("Encontro la palabra %s", palabra);
+    if (letraPalabra == '\0'){
+        // palabraEncontrada();
         return true;
     }
+    // if (columnaPalabra > strlen(palabra) - 1){
+    //     printf("Encontro la palabra %s", palabra);
+    //     return true;
+    // }
 
     //  Caso Base: Chequear límites
-    if (filaSopa < 0 || columnaSopa < 0 || columnaSopa >= sopa->filas|| filaSopa >= sopa->columnas)
+    if (filaSopa < 0 || columnaSopa < 0 || columnaSopa >= sopa->columnas|| filaSopa >= sopa->filas)
         return false;
 
     // Comprobar si la letra de la palabra es igual a la letra que tiene la sopa
@@ -229,7 +229,7 @@ bool buscarPalabra(struct SopaDeLetras *sopa, int filaSopa, int columnaSopa, cha
                 buscarPalabra(sopa, filaSopa-1, columnaSopa-1, palabra, columnaPalabra+1, 8) // Diagonal Izquierda Arriba
             );
         } else {
-            switch (direccion) //Creo que nos falta agregar un return en cada caso. 
+            switch (direccion) 
             {
             case 1: // Vertical Arriba
                 return buscarPalabra(sopa, filaSopa-1, columnaSopa, palabra, columnaPalabra+1, 1);
@@ -266,16 +266,22 @@ bool buscarPalabra(struct SopaDeLetras *sopa, int filaSopa, int columnaSopa, cha
 }
 
 void recorrerSopa(struct SopaDeLetras *sopa){
+    
     for (int i = 0; i < sopa->filas; i++){
         for (int j = 0; j < sopa->columnas; j++){
            // for (int k = 0; k < sopa->cantidad_palabras; k++){
-            for (int k = 0; k < 5; k++){
-             //   printf("La palabra %s esta en el estado %d\n", sopa->datos[k].palabra, sopa->datos[k].encontrada);
+            for (int k = 0; k < sopa->cantidad_palabras; k++){
+             //   printf("La palabra %s esta en el estado %d\n", sopa->datos[k].palabra, sopa->datos[k].encontrada); 
                 if (!sopa->datos[k].encontrada){
                 //    printf("Como no esta encontrada, sopa grilla == palabra, %c == %c\n", sopa->grilla[i][j], sopa->datos[k].palabra[0]);
                   //  printf("Coordenadas: %d, %d\n", i, j);
-                    if (sopa->grilla[i][j] == sopa->datos[k].palabra[0]){
-                        sopa->datos[k].encontrada = buscarPalabra(sopa, i, j, sopa->datos[k].palabra, 0, 0);
+                    // if (sopa->grilla[i][j] == sopa->datos[k].palabra[0]){
+                    //     sopa->datos[k].encontrada = buscarPalabra(sopa, i, j, sopa->datos[k].palabra, 0, 0);
+                    // //    printf("Termina la recursividad, el resultado fue:\n", sopa->datos[k].encontrada);
+                    if (sopa->grilla[i][j] == sopa->palabras[k][0]){
+                        
+                        // sopa->datos[k].encontrada = buscarPalabra(sopa, i, j, sopa->datos[k].palabra, 0, 0);
+                        sopa->datos[k].encontrada = buscarPalabra(sopa, i, j, sopa->palabras[k], 0, 0);
                     //    printf("Termina la recursividad, el resultado fue:\n", sopa->datos[k].encontrada);
                     }
                 }
@@ -283,7 +289,6 @@ void recorrerSopa(struct SopaDeLetras *sopa){
         }
     }
 }
-
 
 //Función para generar el archivo de salida. (Hacer)  
 
