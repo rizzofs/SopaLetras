@@ -193,17 +193,18 @@ void colorearTodasLasPalabras(struct SopaDeLetras *sopa){
 }
 
 //Función recursiva para encontrar la palabra.
-bool buscarPalabra(struct SopaDeLetras *sopa, int filaSopa, int columnaSopa, char palabra[TAMANIO_MAXIMO_PALABRA], int columnaPalabra, int direccion){
+bool buscarPalabra(struct SopaDeLetras *sopa, int filaSopa, int columnaSopa, char palabra[TAMANIO_MAXIMO_PALABRA], 
+    int columnaPalabra, int direccion, int *filaFinal, int *columnaFinal){
+
     char letraPalabra = palabra[columnaPalabra];
     char letraSopa = sopa->grilla[filaSopa][columnaSopa];
-    int filaInicial;
-    int columnaInicial;
-
     //   printf("Palabra: %s, letra: %c, letraSopa: %c, direccion: %d, coordenadas (%d, %d)\n", palabra, letraPalabra, letraSopa, direccion, filaSopa, columnaSopa);
     
     
     //  Caso Base: Llego al final de la cadena de la palabra que buscaba
     if (letraPalabra == '\0'){
+        *filaFinal = filaSopa;
+        *columnaFinal = columnaSopa;
         // printf("Coordenadas de inicio: %d, %d\n", filaInicial, columnaInicial);
         // printf("Coordenadas de fin: %d, %d\n", filaSopa, columnaSopa);
         
@@ -225,41 +226,41 @@ bool buscarPalabra(struct SopaDeLetras *sopa, int filaSopa, int columnaSopa, cha
         //inico.colum
         if (direccion == 0){
             return (
-                buscarPalabra(sopa, filaSopa-1, columnaSopa, palabra, columnaPalabra+1, 1)|| //Vertical Arriba
-                buscarPalabra(sopa, filaSopa-1, columnaSopa+1, palabra, columnaPalabra+1, 2)|| // Diagonal Derecha Arriba
-                buscarPalabra(sopa, filaSopa, columnaSopa+1, palabra, columnaPalabra+1, 3)|| // Horizontal Derecha
-                buscarPalabra(sopa, filaSopa+1, columnaSopa+1, palabra, columnaPalabra+1, 4)|| // Diagonal Derecha Abajo
-                buscarPalabra(sopa, filaSopa+1, columnaSopa, palabra, columnaPalabra+1, 5)|| //Vertical Abajo
-                buscarPalabra(sopa, filaSopa+1, columnaSopa-1, palabra, columnaPalabra+1, 6)|| //Diagonal Izquierda Abajo
-                buscarPalabra(sopa, filaSopa, columnaSopa-1, palabra, columnaPalabra+1, 7)|| //Horizontal Izquierda
-                buscarPalabra(sopa, filaSopa-1, columnaSopa-1, palabra, columnaPalabra+1, 8) // Diagonal Izquierda Arriba
+                buscarPalabra(sopa, filaSopa-1, columnaSopa, palabra, columnaPalabra+1, 1,filaFinal,columnaFinal)|| //Vertical Arriba
+                buscarPalabra(sopa, filaSopa-1, columnaSopa+1, palabra, columnaPalabra+1, 2,filaFinal,columnaFinal)|| // Diagonal Derecha Arriba
+                buscarPalabra(sopa, filaSopa, columnaSopa+1, palabra, columnaPalabra+1, 3,filaFinal,columnaFinal)|| // Horizontal Derecha
+                buscarPalabra(sopa, filaSopa+1, columnaSopa+1, palabra, columnaPalabra+1, 4,filaFinal,columnaFinal)|| // Diagonal Derecha Abajo
+                buscarPalabra(sopa, filaSopa+1, columnaSopa, palabra, columnaPalabra+1, 5,filaFinal,columnaFinal)|| //Vertical Abajo
+                buscarPalabra(sopa, filaSopa+1, columnaSopa-1, palabra, columnaPalabra+1, 6,filaFinal,columnaFinal)|| //Diagonal Izquierda Abajo
+                buscarPalabra(sopa, filaSopa, columnaSopa-1, palabra, columnaPalabra+1, 7,filaFinal,columnaFinal)|| //Horizontal Izquierda
+                buscarPalabra(sopa, filaSopa-1, columnaSopa-1, palabra, columnaPalabra+1, 8,filaFinal,columnaFinal) // Diagonal Izquierda Arriba
             );
         } else {
             switch (direccion) 
             {
             case 1: // Vertical Arriba
-                return buscarPalabra(sopa, filaSopa-1, columnaSopa, palabra, columnaPalabra+1, 1);
+                return buscarPalabra(sopa, filaSopa-1, columnaSopa, palabra, columnaPalabra+1, 1,filaFinal,columnaFinal);
                 break;
             case 2:// Diagonal Derecha Arriba
-                return buscarPalabra(sopa, filaSopa-1, columnaSopa+1, palabra, columnaPalabra+1, 2);
+                return buscarPalabra(sopa, filaSopa-1, columnaSopa+1, palabra, columnaPalabra+1, 2,filaFinal,columnaFinal);
                 break;
             case 3:// Horizontal Derecha
-                return buscarPalabra(sopa, filaSopa, columnaSopa+1, palabra, columnaPalabra+1, 3);
+                return buscarPalabra(sopa, filaSopa, columnaSopa+1, palabra, columnaPalabra+1, 3,filaFinal,columnaFinal);
                 break;
             case 4: // Diagonal Derecha Abajo
-                return buscarPalabra(sopa, filaSopa+1, columnaSopa+1, palabra, columnaPalabra+1, 4);
+                return buscarPalabra(sopa, filaSopa+1, columnaSopa+1, palabra, columnaPalabra+1, 4,filaFinal,columnaFinal);
                 break;
             case 5://Vertical Abajo
-                return buscarPalabra(sopa, filaSopa+1, columnaSopa, palabra, columnaPalabra+1, 5);
+                return buscarPalabra(sopa, filaSopa+1, columnaSopa, palabra, columnaPalabra+1, 5,filaFinal,columnaFinal);
                 break;
             case 6://Diagonal Izquierda Abajo
-                return buscarPalabra(sopa, filaSopa+1, columnaSopa-1, palabra, columnaPalabra+1, 6);
+                return buscarPalabra(sopa, filaSopa+1, columnaSopa-1, palabra, columnaPalabra+1, 6,filaFinal,columnaFinal);
                 break;
             case 7://Horizontal Izquierda
-                return buscarPalabra(sopa, filaSopa, columnaSopa-1, palabra, columnaPalabra+1, 7);
+                return buscarPalabra(sopa, filaSopa, columnaSopa-1, palabra, columnaPalabra+1, 7,filaFinal,columnaFinal);
                 break;
             case 8:// Diagonal Izquierda Arriba
-                return buscarPalabra(sopa, filaSopa-1, columnaSopa-1, palabra, columnaPalabra+1, 8);
+                return buscarPalabra(sopa, filaSopa-1, columnaSopa-1, palabra, columnaPalabra+1, 8,filaFinal,columnaFinal);
                 break;
             
             default:
@@ -277,6 +278,8 @@ void recorrerSopa(struct SopaDeLetras *sopa, struct ResultadoPalabra *resultado)
         for (int j = 0; j < sopa->columnas; j++){
            // for (int k = 0; k < sopa->cantidad_palabras; k++){
             for (int k = 0; k < sopa->cantidad_palabras; k++){
+                int filaFinal = -1;  
+                int columnaFinal = -1;
              //   printf("La palabra %s esta en el estado %d\n", sopa->datos[k].palabra, sopa->datos[k].encontrada); 
                 if (!sopa->datos[k].encontrada){
                 //    printf("Como no esta encontrada, sopa grilla == palabra, %c == %c\n", sopa->grilla[i][j], sopa->datos[k].palabra[0]);
@@ -289,18 +292,22 @@ void recorrerSopa(struct SopaDeLetras *sopa, struct ResultadoPalabra *resultado)
                         // resultado->inicio.columna =j;
                         // printf("Coordenadas de inicio: %d, %d\n",resultado->inicio.fila,resultado->inicio.columna);
                         // sopa->datos[k].encontrada = buscarPalabra(sopa, i, j, sopa->datos[k].palabra, 0, 0);
-                        sopa->datos[k].encontrada = buscarPalabra(sopa, i, j, sopa->palabras[k], 0, 0);
+                        sopa->datos[k].encontrada = buscarPalabra(sopa, i, j, sopa->palabras[k], 0, 0,&filaFinal, 
+                            &columnaFinal);
                         //    printf("Termina la recursividad, el resultado fue:\n", sopa->datos[k].encontrada);
                         
                         //Tenemos coordenas iniciales y funiona (NO TOCAR)
                          if(sopa->datos[k].encontrada){
                             resultado->inicio.fila = i;
                             resultado->inicio.columna =j;
+                            resultado->fin.fila = filaFinal;
+                            resultado->fin.columna = columnaFinal;
+                            printf("Palabra Encontrada: %s\n",sopa->datos[k]);
                             printf("Coordenadas de inicio: %d, %d\n",resultado->inicio.fila,resultado->inicio.columna);
+                            printf("Coordenadas de fin: %d, %d\n", resultado->fin.fila, resultado->fin.columna);
+                            printf("\n");
                         }
-                        // resultado->fin.fila = *fila;
-                        // resultado->fin.columna = *columna;
-                        // printf("Coordenadas de fin: %d, %d\n",resultado->fin.fila,resultado->fin.columna);}
+                        
                         
                     }
                 }
@@ -311,6 +318,9 @@ void recorrerSopa(struct SopaDeLetras *sopa, struct ResultadoPalabra *resultado)
 }
 
 //Función para generar el archivo de salida. (Hacer)  
+void generarArchivo(){
+    
+}
 
 int main() {
     struct SopaDeLetras sopa;
