@@ -1,4 +1,3 @@
-// Borrar de la estructura sopa el char de palabras
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -31,7 +30,6 @@ struct SopaDeLetras {
     char grilla[TAMANIO_MAXIMO_GRILLA][TAMANIO_MAXIMO_GRILLA];
     int filas;
     int columnas;
-    char palabras[MAXIMO_PALABRAS][TAMANIO_MAXIMO_PALABRA]; //Lista de palabras
     int cantidad_palabras;
     int longitud[MAXIMO_PALABRAS]; //agregue esto
     struct ResultadoPalabra datos[MAXIMO_PALABRAS];
@@ -81,17 +79,11 @@ void leerArchivo(const char *archivo, struct SopaDeLetras *sopa) {
 
         palabra[indice] = '\0';
         if (indice > 0 && sopa->cantidad_palabras < MAXIMO_PALABRAS) { // Ignorar palabras vacías
-            strcpy(sopa->palabras[sopa->cantidad_palabras], palabra);
+            strcpy(sopa->datos[sopa->cantidad_palabras].palabra, palabra);
             sopa->longitud[sopa->cantidad_palabras] = strlen(palabra);//Almaceno la longitud de cada palabra
             sopa->cantidad_palabras++;
         }
         fscanf(f, "%c", &letra);
-        
-        for (int i = 0; i < sopa->cantidad_palabras; i++){            
-            strcpy(sopa->datos[i].palabra, sopa->palabras[i]);
-            sopa->datos[i].encontrada = false;
-        }
-        
     }
     fclose(f);
 }
@@ -197,24 +189,15 @@ bool buscarPalabra(struct SopaDeLetras *sopa, int filaSopa, int columnaSopa, cha
     int columnaPalabra, int direccion, int *filaFinal, int *columnaFinal){
 
     char letraPalabra = palabra[columnaPalabra];
-    char letraSopa = sopa->grilla[filaSopa][columnaSopa];
-    //   printf("Palabra: %s, letra: %c, letraSopa: %c, direccion: %d, coordenadas (%d, %d)\n", palabra, letraPalabra, letraSopa, direccion, filaSopa, columnaSopa);
-    
+    char letraSopa = sopa->grilla[filaSopa][columnaSopa]; 
     
     //  Caso Base: Llego al final de la cadena de la palabra que buscaba
     if (letraPalabra == '\0'){
-        *filaFinal = filaSopa;
-        *columnaFinal = columnaSopa;
-        // printf("Coordenadas de inicio: %d, %d\n", filaInicial, columnaInicial);
-        // printf("Coordenadas de fin: %d, %d\n", filaSopa, columnaSopa);
-        
-        //fila.colum
         return true;
     }
-    // if (columnaPalabra > strlen(palabra) - 1){
-    //     printf("Encontro la palabra %s", palabra);
-    //     return true;
-    // }
+    
+    *filaFinal = filaSopa;
+    *columnaFinal = columnaSopa;
 
     //  Caso Base: Chequear límites
     if (filaSopa < 0 || columnaSopa < 0 || columnaSopa >= sopa->columnas|| filaSopa >= sopa->filas)
@@ -222,8 +205,6 @@ bool buscarPalabra(struct SopaDeLetras *sopa, int filaSopa, int columnaSopa, cha
 
     // Comprobar si la letra de la palabra es igual a la letra que tiene la sopa
     if (letraPalabra == letraSopa) {
-        //inicio.fila
-        //inico.colum
         if (direccion == 0){
             return (
                 buscarPalabra(sopa, filaSopa-1, columnaSopa, palabra, columnaPalabra+1, 1,filaFinal,columnaFinal)|| //Vertical Arriba
@@ -272,43 +253,28 @@ bool buscarPalabra(struct SopaDeLetras *sopa, int filaSopa, int columnaSopa, cha
     }
 }
 
-void recorrerSopa(struct SopaDeLetras *sopa, struct ResultadoPalabra *resultado){
+void recorrerSopa(struct SopaDeLetras *sopa){
     
     for (int i = 0; i < sopa->filas; i++){
         for (int j = 0; j < sopa->columnas; j++){
-           // for (int k = 0; k < sopa->cantidad_palabras; k++){
+           
             for (int k = 0; k < sopa->cantidad_palabras; k++){
                 int filaFinal = -1;  
                 int columnaFinal = -1;
-             //   printf("La palabra %s esta en el estado %d\n", sopa->datos[k].palabra, sopa->datos[k].encontrada); 
                 if (!sopa->datos[k].encontrada){
-                //    printf("Como no esta encontrada, sopa grilla == palabra, %c == %c\n", sopa->grilla[i][j], sopa->datos[k].palabra[0]);
-                  //  printf("Coordenadas: %d, %d\n", i, j);
-                    // if (sopa->grilla[i][j] == sopa->datos[k].palabra[0]){
-                    //     sopa->datos[k].encontrada = buscarPalabra(sopa, i, j, sopa->datos[k].palabra, 0, 0);
-                    // //    printf("Termina la recursividad, el resultado fue:\n", sopa->datos[k].encontrada);
-                    if (sopa->grilla[i][j] == sopa->palabras[k][0]){
-                        // resultado->inicio.fila = i;
-                        // resultado->inicio.columna =j;
-                        // printf("Coordenadas de inicio: %d, %d\n",resultado->inicio.fila,resultado->inicio.columna);
-                        // sopa->datos[k].encontrada = buscarPalabra(sopa, i, j, sopa->datos[k].palabra, 0, 0);
-                        sopa->datos[k].encontrada = buscarPalabra(sopa, i, j, sopa->palabras[k], 0, 0,&filaFinal, 
+                    if (sopa->grilla[i][j] == sopa->datos[k].palabra[0]){
+                        sopa->datos[k].encontrada = buscarPalabra(sopa, i, j, sopa->datos[k].palabra, 0, 0,&filaFinal, 
                             &columnaFinal);
-                        //    printf("Termina la recursividad, el resultado fue:\n", sopa->datos[k].encontrada);
-                        
-                        //Tenemos coordenas iniciales y funiona (NO TOCAR)
                          if(sopa->datos[k].encontrada){
-                            resultado->inicio.fila = i;
-                            resultado->inicio.columna =j;
-                            resultado->fin.fila = filaFinal;
-                            resultado->fin.columna = columnaFinal;
+                            sopa->datos[k].inicio.fila = i;
+                            sopa->datos[k].inicio.columna =j;
+                            sopa->datos[k].fin.fila = filaFinal;
+                            sopa->datos[k].fin.columna = columnaFinal;
                             printf("Palabra Encontrada: %s\n",sopa->datos[k]);
-                            printf("Coordenadas de inicio: %d, %d\n",resultado->inicio.fila,resultado->inicio.columna);
-                            printf("Coordenadas de fin: %d, %d\n", resultado->fin.fila, resultado->fin.columna);
+                            printf("Coordenadas de inicio: %d, %d\n",sopa->datos[k].inicio.fila,sopa->datos[k].inicio.columna);
+                            printf("Coordenadas de fin: %d, %d\n", sopa->datos[k].fin.fila, sopa->datos[k].fin.columna);
                             printf("\n");
-                        }
-                        
-                        
+                        }                      
                     }
                 }
                 
@@ -317,9 +283,18 @@ void recorrerSopa(struct SopaDeLetras *sopa, struct ResultadoPalabra *resultado)
     }
 }
 
-//Función para generar el archivo de salida. (Hacer)  
-void generarArchivo(){
+//Función para generar el archivo de salida.  
+void generarArchivo(struct SopaDeLetras *sopa){
     
+    FILE *archivo = fopen("salida.txt","w");
+
+    for (int i = 0; i < sopa->cantidad_palabras; i++){
+        if (sopa->datos[i].encontrada){
+            fprintf(archivo, "%s: (%d,%d) -> (%d,%d)\n", sopa->datos[i].palabra, sopa->datos[i].inicio.fila, sopa->datos[i].inicio.columna, sopa->datos[i].fin.fila, sopa->datos[i].fin.columna);
+        }
+    }
+
+    fclose(archivo);
 }
 
 int main() {
@@ -327,20 +302,20 @@ int main() {
     sopa.filas = 0;
     sopa.columnas = 0;
     sopa.cantidad_palabras = 0;
-    struct ResultadoPalabra palabraDatos[MAXIMO_PALABRAS];
-    struct ResultadoPalabra resultado;
+    clock_t t_inicial,t_final;
 
     leerArchivo("entrada.txt", &sopa);
 
     int opcion;
 
     do {
-        printf("*****************************\n");
+        printf("*******************************\n");
         printf("************MENU***************\n");
         printf("*******************************\n");
         printf("1 - Mostrar sopa de letras\n");
         printf("2 - Mostrar Palabras\n");
         printf("3 - Resolver\n");
+        printf("4 - Generar archivo\n");
         printf("0 - Salir\n");
         printf("Ingrese la opcion deseada: ");
 
@@ -363,10 +338,14 @@ int main() {
                 break;
             case 3:
                 //Medir tiempo de ejecucion
-                //bool buscarPalabra(struct SopaDeLetras *sopa, int filaSopa, int columnaSopa, int filaPalabra, int columnaPalabra, int direccion){
-                recorrerSopa(&sopa , &resultado);
+                t_inicial = clock();
+                recorrerSopa(&sopa);    
+                t_final =clock();
+                double tiempoTotal = (double)(t_final - t_inicial) / CLOCKS_PER_SEC;
+                printf("Tiempo de ejecucion: %.6f segundos\n", tiempoTotal);
                 break;
             case 4:
+                generarArchivo(&sopa);
                 break;
             default:
                 printf("Opción no válida.\n");
@@ -376,6 +355,9 @@ int main() {
 
     return 0;
 }
+
+
+
 
 /* Compilar */
 //gcc -o Sopa Sopa.c
